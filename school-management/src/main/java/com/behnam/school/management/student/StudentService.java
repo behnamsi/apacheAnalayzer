@@ -42,6 +42,8 @@ public class StudentService {
                     new IllegalStateException("invalid college id"));
             student.setStudentCollege(college);
             repository.save(student);
+        } else {
+            throw new IllegalStateException("college id can not be null");
         }
     }
 
@@ -62,10 +64,12 @@ public class StudentService {
     }
 
     @Transactional
-    public void updateStudent(Long id, String first_name, String last_name, List<String> courses,
+    public void updateStudent(Long uniId, String first_name, String last_name, List<String> courses,
                               Long nationalId, Long universityId) {
-        Student student = repository.findById(id).orElseThrow(() -> new IllegalStateException
-                ("this id does not exist to update."));
+        if (!repository.existsByUniversityId(uniId)) {
+            throw new IllegalStateException("invalid university id");
+        }
+        Student student = repository.findStudentByUniversityId(uniId);
 
         Optional<Student> studentByNationalId = repository.findStudentByNationalId(nationalId);
         if (studentByNationalId.isPresent()) {
@@ -108,9 +112,11 @@ public class StudentService {
         }
     }
 
-    public List<String> getStudentCourses(Long studentId) {
-        Student student = repository.findById(studentId).orElseThrow(() ->
-                new IllegalStateException("invalid id"));
+    public List<String> getStudentCourses(Long uniId) {
+        if (!repository.existsByUniversityId(uniId)) {
+            throw new IllegalStateException("invalid uni id for the student");
+        }
+        Student student = repository.findStudentByUniversityId(uniId);
         List<String> courses = new ArrayList<>();
         for (Course course : student.getStudentCourses()) {
             courses.add(course.getCourseName());
@@ -119,13 +125,18 @@ public class StudentService {
     }
 
     @Transactional
-    public void addScoreCourse(Long studentId, String courseName, Double score) {
-        Student student = repository.findById(studentId).orElseThrow(
-                () -> new IllegalStateException("invalid student id")
-        );
+    public void addScoreCourse(Long uniId, String courseName, Double score) {
+
+        if (!repository.existsByUniversityId(uniId)) {
+            throw new IllegalStateException("invalid university id");
+        }
+
         if (!courseRepository.existsCourseByCourseName(courseName)) {
             throw new IllegalStateException("invalid course name");
         }
+
+
+        Student student = repository.findStudentByUniversityId(uniId);
         List<Course> courseList = student.getStudentCourses();
         boolean courseFlag = false;
         for (Course course : courseList) {
@@ -145,16 +156,15 @@ public class StudentService {
 
     // delete a course of a student
     @Transactional
-    public void deleteStudentCourse(Long studentId, String courseName) {
+    public void deleteStudentCourse(Long uniId, String courseName) {
 
-
-        Student student = repository.findById(studentId).orElseThrow(
-                () -> new IllegalStateException("invalid student id"));
+        if (!repository.existsByUniversityId(uniId)) {
+            throw new IllegalStateException("invalid university id");
+        }
         if (!courseRepository.existsCourseByCourseName(courseName)) {
             throw new IllegalStateException("invalid course name");
         }
-
-
+        Student student = repository.findStudentByUniversityId(uniId);
         boolean courseFlag = false;
         List<Course> courseList = student.getStudentCourses();
         for (int i = 0; i < courseList.size(); i++) {
@@ -178,10 +188,11 @@ public class StudentService {
         student.setScores(studentScoresMap);
     }
 
-    public Double getStudentAverage(Long studentId) {
-        Student student = repository.findById(studentId).orElseThrow(
-                () -> new IllegalStateException("invalid student id")
-        );
+    public Double getStudentAverage(Long uniID) {
+        if (!repository.existsByUniversityId(uniID)) {
+            throw new IllegalStateException("invalid uni id");
+        }
+        Student student = repository.findStudentByUniversityId(uniID);
 
         List<Course> courses = student.getStudentCourses();
         Map<String, Double> scores = student.getScores();

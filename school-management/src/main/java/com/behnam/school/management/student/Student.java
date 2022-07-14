@@ -58,7 +58,7 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "course_id",
                     referencedColumnName = "courseId")
     )
-
+    @JsonIgnore
     private List<Course> studentCourses;
 
     // professorsOfStudent

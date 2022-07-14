@@ -21,22 +21,25 @@ public class StudentController {
     }
 
     // GET methods
+
+    // get the all of students
     @GetMapping("all/")
     public List<Student> getAllStudents() {
         return service.getAllStudents();
     }
 
-
-    @GetMapping(path = "courses/{studentId}")
+    //get student courses using university id
+    @GetMapping(path = "courses/{uniID}")
     public List<String> getStudentCourses(
-            @PathVariable("studentId") Long studentId
+            @PathVariable("uniID") Long uniID
     ) {
-        return service.getStudentCourses(studentId);
+        return service.getStudentCourses(uniID);
     }
 
-    @GetMapping(path = "get-avg/{studentId}")
-    public Double getStudentAverage(@PathVariable("studentId") Long studentId) {
-        return service.getStudentAverage(studentId);
+    // get student averages
+    @GetMapping(path = "get-avg/{uniID}")
+    public Double getStudentAverage(@PathVariable("uniID") Long uniID) {
+        return service.getStudentAverage(uniID);
     }
 
 
@@ -65,32 +68,35 @@ public class StudentController {
         service.deleteStudentByUniId(uniId);
     }
 
-    @PutMapping(path = "update/{studentId}")
+    // update with university id
+    @PutMapping(path = "update/{uniId}")
     public void updateStudent(
-            @PathVariable("studentId") Long id,
+            @PathVariable("uniId") Long uniId,
             @RequestParam(required = false) String first_name,
             @RequestParam(required = false) String last_name,
             @RequestParam(required = false) List<String> courses,
             @RequestParam(required = false) Long nationalId,
             @RequestParam(required = false) Long universityId
     ) {
-        service.updateStudent(id, first_name, last_name, courses, nationalId, universityId);
+        service.updateStudent(uniId, first_name, last_name, courses, nationalId, universityId);
     }
 
-    @PutMapping(path = "add/score/{studentId}/{courseName}")
+    // add course for student
+    @PutMapping(path = "add/score/{uniId}/{courseName}")
     public void addScoreCourse(
-            @PathVariable("studentId") Long studentId,
+            @PathVariable("uniId") Long uniId,
             @PathVariable("courseName") String courseName,
             @RequestParam Double score
     ) {
-        service.addScoreCourse(studentId, courseName, score);
+        service.addScoreCourse(uniId, courseName, score);
     }
 
-    @PutMapping(path = "{studentId}/course/delete")
+    // delete course for student
+    @PutMapping(path = "{uniId}/course/delete")
     public void deleteStudentCourse(
-            @PathVariable("studentId") Long studentId,
+            @PathVariable("uniId") Long uniId,
             @RequestParam String courseName
     ) {
-        service.deleteStudentCourse(studentId, courseName);
+        service.deleteStudentCourse(uniId, courseName);
     }
 }
