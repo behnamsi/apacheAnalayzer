@@ -47,7 +47,7 @@ public class Professor {
     @JsonIgnore
     private College professorCollege;
 
-    @ManyToMany(mappedBy = "professorsOfStudent",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "professorsOfStudent")
     @JsonIgnore
     private List<Student> studentsOfProfessor;
     public Professor() {

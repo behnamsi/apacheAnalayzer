@@ -5,7 +5,6 @@ import com.behnam.school.management.course.Course;
 import com.behnam.school.management.professor.Professor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +62,7 @@ public class Student {
 
     // professorsOfStudent
     @ManyToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.PERSIST
     )
     @JoinTable(
             name = "student_professor",
